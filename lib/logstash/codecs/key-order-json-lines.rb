@@ -16,7 +16,7 @@ require 'logstash/plugin_mixins/event_support/from_json_helper'
 # More info: This codec is expecting to receive a stream (string) of newline
 # terminated lines. The file input will produce a line string without a newline.
 # Therefore this codec cannot work with line oriented inputs.
-class LogStash::Codecs::JSONLines < LogStash::Codecs::Base
+class LogStash::Codecs::KeyOrderJSONLines < LogStash::Codecs::Base
 
   include LogStash::PluginMixins::ECSCompatibilitySupport
   include LogStash::PluginMixins::ECSCompatibilitySupport::TargetCheck
@@ -26,7 +26,7 @@ class LogStash::Codecs::JSONLines < LogStash::Codecs::Base
   include LogStash::PluginMixins::EventSupport::EventFactoryAdapter
   include LogStash::PluginMixins::EventSupport::FromJsonHelper
 
-  config_name "json_lines"
+  config_name "key-order-json-lines"
 
   # The character encoding used in this codec. Examples include `UTF-8` and
   # `CP1252`
@@ -41,6 +41,8 @@ class LogStash::Codecs::JSONLines < LogStash::Codecs::Base
 
   # Change the delimiter that separates lines
   config :delimiter, :validate => :string, :default => "\n"
+
+  config :key_order, :validate => :array, :required => true
 
   # Defines a target field for placing decoded fields.
   # If this setting is omitted, data gets stored at the root (top level) of the event.
@@ -64,7 +66,15 @@ class LogStash::Codecs::JSONLines < LogStash::Codecs::Base
   def encode(event)
     # Tack on a @delimiter for now because previously most of logstash's JSON
     # outputs emitted one per line, and whitespace is OK in json.
-    @on_event.call(event, "#{event.to_json}#{@delimiter}")
+
+    ordered_event = {}
+    @key_order.each do |key|
+      ordered_event[key] = event.get(key) if event.include?(key)
+    end
+
+    # LogStash::Json.dump(ordered_event)
+
+    @on_event.call(event, "#{ordered_event.to_json}#{@delimiter}")
   end
 
   def flush(&block)

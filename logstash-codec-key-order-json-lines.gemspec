@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
 
-  s.name            = 'logstash-codec-json_lines'
-  s.version         = '3.1.0'
-  s.licenses        = ['Apache License (2.0)']
-  s.summary         = "Reads and writes newline-delimited JSON"
+  s.name            = 'logstash-codec-key-order-json-lines'
+  s.version         = '1.0.0'
+  s.licenses      = ['Apache-2.0']
+  s.summary         = "Reads and writes newline-delimited JSON with a specific key order"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
-  s.authors         = ["Elastic"]
-  s.email           = 'info@elastic.co'
-  s.homepage        = "http://www.elastic.co/guide/en/logstash/current/index.html"
+  s.authors         = ["Evan Vinciguerra"]
+  s.email           = 'evanv511@gmail.com'
+  s.homepage        = "https://github.com/evanvin/logstash-codec-key-order-json-lines"
   s.require_paths   = ["lib"]
 
   # Files
@@ -31,4 +31,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'logstash-devutils'
   s.add_development_dependency 'insist'
 end
-
